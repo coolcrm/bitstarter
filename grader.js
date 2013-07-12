@@ -27,6 +27,10 @@ var cheerio = require('cheerio');
 var HTMLFILE_DEFAULT = "index.html";
 var CHECKSFILE_DEFAULT = "checks.json";
 
+//New Code By VK
+var rest = require('restler');
+var myUrl = "http://google.com";
+
 var assertFileExists = function(infile) {
     var instr = infile.toString();
     if(!fs.existsSync(instr)) {
@@ -61,11 +65,23 @@ var clone = function(fn) {
     return fn.bind({});
 };
 
-if(require.main == module) {
+if(   require.main == module) {
     program
         .option('-c, --checks <check_file>', 'Path to checks.json', clone(assertFileExists), CHECKSFILE_DEFAULT)
         .option('-f, --file <html_file>', 'Path to index.html', clone(assertFileExists), HTMLFILE_DEFAULT)
+        .option('-u, --url <html_file>', 'Url to file')
         .parse(process.argv);
+    
+    rest.get('https://github.com/coolcrm/bitstarter/blob/5b2e700f98bf2c6bae7093630c3f8dd323f88d83/index.html').on('complete',function(result){    
+    //HERE                                             
+      console.log(result);
+    });  
+    /*
+    if (program.url)
+      console.log('Checks file is: ', program.checks);
+    if (program.file)
+      console.log('File is: ', program.file);
+    */
     var checkJson = checkHtmlFile(program.file, program.checks);
     var outJson = JSON.stringify(checkJson, null, 4);
     console.log(outJson);
